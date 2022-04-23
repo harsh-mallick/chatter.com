@@ -3,175 +3,98 @@
 
 <head>
     <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Chatter - Realtime chat application</title>
-    <link rel="stylesheet" href="/style.css">
+    <title>Chatter - Realtime Chat app</title>
+    <link rel="shortcut icon" href="favicon.png" type="image/png">
     <style>
-        @import url('https://fonts.googleapis.com/css2?family=Roboto&display=swap');
-
         * {
-            padding: 0;
             margin: 0;
-            box-sizing: border-box;
+            padding: 0;
         }
 
-        body {
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            min-height: 100vh;
-            background-image: linear-gradient(43deg, #4158D0 0%, #C850C0 46%, #FFCC70 100%);
-
-            font-family: 'Roboto', sans-serif;
-        }
-
-        section.chat{
-            width: 800px;
-            max-width: 90%;
-            background: #fff;
-            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
-        }
-
-        .brand {
-            padding: 20px;
-            background: #f1f1f1;
-            display: flex;
-            align-items: center;
-        }
-
-        .brand h1 {
-            text-transform: uppercase;
-            font-size: 20px;
-            color: #444;
-            margin-left: 10px;
-        }
-
-        .chatarea {
-            height: 500px;
-            padding: 16px;
-            display: flex;
-            flex-direction: column;
-            overflow-y: auto;
-            padding-top: 40px;
-            background: #f12711;
-            /* fallback for old browsers */
-            background: -webkit-linear-gradient(to right, #f5af19, #f12711);
-            /* Chrome 10-25, Safari 5.1-6 */
-            background: linear-gradient(to right, #f5af19, #f12711);
-            /* W3C, IE 10+/ Edge, Firefox 16+, Chrome 26+, Opera 12+, Safari 7+ */
-
-        }
-
-        textarea {
+        iframe {
             width: 100%;
-            border: none;
-            padding: 20px;
-            font-size: 16px;
-            outline: none;
-            background: #FBFBFB;
+            height: 728px;
+            margin: 0;
         }
 
-        .message {
-            padding: 20px;
-            border-radius: 4px;
-            margin-bottom: 40px;
-            max-width: 300px;
-            position: relative;
-            border: 2px solid black;
+        .maker {
+            background-color: aqua;
+            text-align: right;
+            margin: 0;
+            font-size: large;
+            font-weight: bold;
+            padding-right: 10px;
         }
 
-        .incoming {
-            background: #fdfdfd;
-            color: rgb(0, 0, 0);
-        }
-
-        .outgoing {
-            background: rgb(217, 253, 211);
-            color: #000000;
-            margin-left: auto;
-        }
-
-        .message h4 {
+        .context-menu {
+            margin-top: 10px;
             position: absolute;
-            top: -20px;
-            left: 0;
-            color: #333;
-            font-size: 14px;
+            text-align: center;
+            background-color: rgb(0, 0, 0);
+        }
+
+        .context-menu ul {
+            padding: 0px;
+            margin: 0px;
+            min-width: 150px;
+            list-style: none;
+        }
+
+        .context-menu ul li {
+            padding-bottom: 7px;
+            padding-top: 7px;
+            border: 1px solid black;
+        }
+
+        .context-menu ul li a {
+            text-decoration: none;
+            color: rgb(255, 255, 255);
+        }
+
+        .context-menu ul li:hover {
+            background-color: lightgrey;
+            color: black;
         }
     </style>
 </head>
 
 <body>
-    <section class="chat">
-        <div class="brand">
-            <img height="40" src="/wassup.png" alt="">
-            <h1>Chatter</h1>
-        </div>
-        <div class="chatarea"></div>
-        <div>
-            <textarea id="textarea" cols="30" rows="1" placeholder="Please type a message..."></textarea>
-        </div>
-    </section>
-    <script src="/socket.io/socket.io.js"></script>
-    <script>
-        const socket = io()
-        let name;
-        let textarea = document.querySelector('#textarea');
-        let messageArea = document.querySelector('.chatarea')
-        do {
-            name = prompt('Please enter your name: ')
-            socket.emit('name', name);
-            alert("A user connected " + name);
-        } while (!name);
-
-        textarea.addEventListener('keyup', (e) => {
-            if (e.key === 'Enter') {
-                sendMessage(e.target.value)
-            }
-        })
-
-        function sendMessage(message) {
-            let msg = {
-                user: name,
-                message: message.trim()
-            }
-            // Append 
-            appendMessage(msg, 'outgoing')
-            textarea.value = ''
-            scrollToBottom()
-
-            // Send to server 
-            socket.emit('message', msg)
-
-        }
-
-        function appendMessage(msg, type) {
-            let mainDiv = document.createElement('div')
-            let className = type
-            mainDiv.classList.add(className, 'message')
-
-            let markup = `
-        <h4>${msg.user}</h4>
-        <p>${msg.message}</p>
-    `
-            mainDiv.innerHTML = markup
-            messageArea.appendChild(mainDiv)
-        }
-
-        // Recieve messages 
-        socket.on('message', (msg) => {
-            appendMessage(msg, 'incoming')
-            scrollToBottom()
-        })
-
-        function scrollToBottom() {
-            messageArea.scrollTop = messageArea.scrollHeight
-        }
-
-
-
-
-    </script>
+    <iframe src="http://localhost:4000" frameborder="0"></iframe>
+    <div class="maker">
+        Developed by: - Harsh Mallick
+    </div>
+    <div id="contextMenu" class="context-menu" style="display:none">
+        <ul>
+            <li><a href="#">Reload</a></li>
+        </ul>
+    </div>
 </body>
+<script>
+    document.onclick = hideMenu;
+    document.oncontextmenu = rightClick;
+
+    function hideMenu() {
+        document.getElementById(
+            "contextMenu").style.display = "none"
+    }
+
+    function rightClick(e) {
+        e.preventDefault();
+
+        if (document.getElementById(
+            "contextMenu").style.display == "block")
+            hideMenu();
+        else {
+            var menu = document
+                .getElementById("contextMenu")
+
+            menu.style.display = 'block';
+            menu.style.left = e.pageX + "px";
+            menu.style.top = e.pageY + "px";
+        }
+    }
+</script>
 
 </html>
